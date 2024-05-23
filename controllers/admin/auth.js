@@ -1,4 +1,4 @@
-import User from "../models/user.js";
+import User from "../../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -23,20 +23,18 @@ const signup = async (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: hash_password,
+    role: "admin",
   });
 
   try {
     const savedUser = await user.save();
     return res.status(201).json({
-      status: 200,
-      message: "User Created Successfully",
+      status: 201,
+      message: "Admin Created Successfully",
       payload: savedUser,
     });
   } catch (err) {
-    res.status(400).json({
-      status: 400,
-      message: err,
-    });
+    res.status(400).send(err);
   }
 };
 
@@ -45,14 +43,14 @@ const signin = async (req, res) => {
   if (!user)
     return res.status(404).json({
       status: 404,
-      mwssage: "Email is not found",
+      message: "Email is not found",
     });
 
   const validatedPassword = await bcrypt.compare(
     req.body.password,
     user.password
   );
-  if (validatedPassword) {
+  if (validatedPassword && user.role === "admin") {
     const token = jwt.sign(
       { _id: user._id, role: user.role },
       process.env.JWT_SECRET,
