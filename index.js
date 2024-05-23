@@ -1,6 +1,8 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+import authRouter from "./routes/auth.js";
 
 dotenv.config();
 
@@ -19,7 +21,9 @@ mongoose.connect(DB_URL)
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.use("/api", authRouter);
+
+app.get('/api', (req, res) => {
     res.send('Hello World!');
   });
 
