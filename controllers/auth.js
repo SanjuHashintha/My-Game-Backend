@@ -23,6 +23,7 @@ const signup = async (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: hash_password,
+    role: req.body.role,
   });
 
   try {

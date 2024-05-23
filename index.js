@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import authRouter from "./routes/auth.js";
-import adminRouter from "./routes/admin/auth.js";
 import usersRouter from "./routes/users.js";
 
 dotenv.config();
@@ -25,7 +24,6 @@ const app = express();
 app.use(express.json());
 
 app.use("/api", authRouter);
-app.use("/api", adminRouter);
 app.use("/api", usersRouter);
 
 app.get("/api", (req, res) => {
