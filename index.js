@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import authRouter from "./routes/auth.js";
 import usersRouter from "./routes/users.js";
+import teamRouter from "./routes/team.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.json());
 
 app.use("/api", authRouter);
 app.use("/api", usersRouter);
+app.use("/api", teamRouter);
 
 app.get("/api", (req, res) => {
   res.send("Hello World!");

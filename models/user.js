@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    haveTeam: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
