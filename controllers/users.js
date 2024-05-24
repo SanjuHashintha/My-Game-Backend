@@ -4,6 +4,10 @@ const getUsers = async (req, res) => {
   try {
     let query = {};
 
+    if (req.query.username) {
+      query.username = { $regex: req.query.username, $options: "i" }; // Case-insensitive search
+    }
+
     if (req.query.role) {
       query.role = req.query.role;
     }
