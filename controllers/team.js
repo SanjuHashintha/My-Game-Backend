@@ -65,16 +65,46 @@ const createTeam = async (req, res) => {
 
 const getTeams = async (req, res) => {
   try {
-    const teams = await Team.find().populate({
-      path: "users",
-      select: "username",
-    });
+    let query = {};
 
-    return res.status(200).json({
-      status: 200,
-      payload: teams,
-    });
+    if (req.query.teamName) {
+      query.teamName = { $regex: req.query.teamName, $options: "i" }; // Case-insensitive search
+    }
+
+    if (req.query.id) {
+      query._id = req.query.id;
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const size = parseInt(req.query.size) || 10;
+    const skip = (page - 1) * size;
+
+    const teams = await Team.find(query)
+      .populate({
+        path: "users",
+        select: "username",
+      })
+      .skip(skip)
+      .limit(size);
+
+    const totalTeamCount = await Team.countDocuments(query);
+
+    if (teams.length > 0) {
+      return res.status(200).json({
+        status: 200,
+        totalTeamCount,
+        totalPages: Math.ceil(totalTeamCount / size),
+        currentPage: page,
+        payload: teams,
+      });
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: "No teams found",
+      });
+    }
   } catch (error) {
+    console.error("Error occurred:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
