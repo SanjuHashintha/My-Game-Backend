@@ -72,4 +72,33 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getUsers, deleteUser };
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updateData = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (updatedUser) {
+      return res.status(200).json({
+        status: 200,
+        payload: updatedUser,
+      });
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "Internal Server Error",
+    });
+  }
+};
+
+export { getUsers, deleteUser, updateUser };
