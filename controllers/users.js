@@ -12,6 +12,10 @@ const getUsers = async (req, res) => {
       query._id = req.query.id;
     }
 
+    if (req.query.haveTeam) {
+      query.haveTeam = req.query.haveTeam;
+    }
+
     const page = parseInt(req.query.page) || 1;
     const size = parseInt(req.query.size) || 10;
     const skip = (page - 1) * size;
