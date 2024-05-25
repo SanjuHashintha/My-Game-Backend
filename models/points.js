@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 
 const pointSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     event: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
@@ -15,6 +10,11 @@ const pointSchema = new mongoose.Schema(
     team: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     points: {

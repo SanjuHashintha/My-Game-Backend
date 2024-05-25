@@ -136,6 +136,15 @@ const updateTeam = async (req, res) => {
         });
       }
 
+      // Check if the users exist in the database
+      const foundUsers = await User.find({ _id: { $in: users } });
+      if (foundUsers.length !== users.length) {
+        return res.status(400).json({
+          status: 400,
+          message: "One or more users not found",
+        });
+      }
+
       // Filter out users who are already part of this team
       const usersNotInCurrentTeam = users.filter(
         (userId) =>

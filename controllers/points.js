@@ -67,9 +67,9 @@ const getPoints = async (req, res) => {
     const skip = (page - 1) * size;
 
     const points = await Point.find(query)
-      .populate("user", "username")
       .populate("event", "eventName")
       .populate("team", "teamName")
+      .populate("user", "username")
       .skip(skip)
       .limit(size);
 
@@ -100,7 +100,7 @@ const getPoints = async (req, res) => {
 
 const updatePoints = async (req, res) => {
   try {
-    const { user, event, team, points } = req.body;
+    const { event, team, user, points } = req.body;
 
     // Validate user ID
     const getUser = await User.findById(user);
@@ -145,4 +145,55 @@ const updatePoints = async (req, res) => {
   }
 };
 
-export { addPoints, getPoints, updatePoints };
+const deletePoints = async (req, res) => {
+  try {
+    const { eventId, teamId, userId } = req.query;
+
+    // Validate event ID
+    if (eventId) {
+      const event = await Event.findById(eventId);
+      if (!event) {
+        return res.status(400).json({ error: "Invalid event ID" });
+      }
+    }
+
+    // Validate team ID
+    if (teamId) {
+      const team = await Team.findById(teamId);
+      if (!team) {
+        return res.status(400).json({ error: "Invalid team ID" });
+      }
+    }
+    // Validate user ID
+    if (userId) {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+    }
+
+    // Build query for deletion
+    const query = {};
+    if (eventId) query.event = eventId;
+    if (teamId) query.team = teamId;
+    if (userId) query.user = userId;
+
+    // Delete points based on query
+    const result = await Point.deleteMany(query);
+
+    if (result.deletedCount > 0) {
+      return res.status(200).json({
+        status: 200,
+        payload: result,
+        message: "Points deleted successfully",
+      });
+    } else {
+      return res.status(404).json({ error: "No points found to delete" });
+    }
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { addPoints, getPoints, updatePoints, deletePoints };
