@@ -55,6 +55,10 @@ const getEvent = async (req, res) => {
     const events = await Event.find(query)
       .populate({
         path: "teams",
+        populate: {
+          path: "users",
+          select: "username",
+        },
       })
       .skip(skip)
       .limit(size);
