@@ -6,12 +6,12 @@ const signup = async (req, res) => {
   const existing_user_email = await User.findOne({ email: req.body.email });
   const existing_username = await User.findOne({ username: req.body.username });
   if (existing_user_email)
-    return res.status(400).json({
+    return res.status(200).json({
       status: 400,
       message: "Email already exist",
     });
   if (existing_username)
-    return res.status(400).json({
+    return res.status(200).json({
       status: 400,
       message: `Username '${req.body.username}' already exists`,
     });
@@ -28,7 +28,7 @@ const signup = async (req, res) => {
 
   try {
     const savedUser = await user.save();
-    return res.status(201).json({
+    return res.status(200).json({
       status: 200,
       message: "User Created Successfully",
       payload: savedUser,
@@ -44,9 +44,9 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user)
-    return res.status(404).json({
+    return res.status(200).json({
       status: 404,
-      mwssage: "Email is not found",
+      message: "Email is not found",
     });
 
   const validatedPassword = await bcrypt.compare(
@@ -73,7 +73,10 @@ const signin = async (req, res) => {
       },
     });
   } else {
-    return res.status(400).send("Password is wrong");
+    return res.status(200).json({
+      status: 404,
+      message: "Password is wrong",
+    });
   }
 };
 
