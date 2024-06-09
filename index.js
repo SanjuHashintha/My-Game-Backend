@@ -29,6 +29,7 @@ app.use(express.json());
 
 // Use cors middleware
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api", authRouter);
 app.use("/api", usersRouter);

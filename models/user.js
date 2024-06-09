@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    profilePic: {
+      type: String, // URL or path to the profile picture
+      default: "", // Default value if no profile picture is uploaded
+    },
   },
   { timestamps: true }
 );
