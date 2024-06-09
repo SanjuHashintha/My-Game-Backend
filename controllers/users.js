@@ -1,11 +1,20 @@
 import User from "../models/user.js";
+import bcrypt from "bcryptjs";
 
 const getUsers = async (req, res) => {
   try {
     let query = {};
 
     if (req.query.username) {
-      query.username = { $regex: req.query.username, $options: "i" }; // Case-insensitive search
+      query.username = { $regex: req.query.username, $options: "i" };
+    }
+
+    if (req.query.firstName) {
+      query.firstName = { $regex: req.query.firstName, $options: "i" };
+    }
+
+    if (req.query.lastName) {
+      query.lastName = { $regex: req.query.lastName, $options: "i" };
     }
 
     if (req.query.role) {
@@ -85,22 +94,40 @@ const updateUser = async (req, res) => {
     const userId = req.params.id;
     const updateData = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (updatedUser) {
-      return res.status(200).json({
-        status: 200,
-        payload: updatedUser,
-      });
-    } else {
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({
         status: 404,
         message: "User not found",
       });
     }
+
+    // Validate that the email belongs to the user with the given ID
+    if (updateData.email && updateData.email !== user.email) {
+      return res.status(400).json({
+        status: 400,
+        message: "Email does not match the user ID",
+      });
+    }
+
+    // Check if the password is being updated
+    if (updateData.password) {
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(updateData.password, salt);
+      updateData.password = hashedPassword;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json({
+      status: 200,
+      payload: updatedUser,
+    });
   } catch (error) {
     return res.status(500).json({
       status: 500,

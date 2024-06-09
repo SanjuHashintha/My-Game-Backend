@@ -22,6 +22,8 @@ const signup = async (req, res) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     password: hash_password,
     role: req.body.role,
   });
@@ -61,13 +63,15 @@ const signin = async (req, res) => {
         expiresIn: "365d",
       }
     );
-    const { _id, username, email, role } = user;
+    const { _id, username, firstName, lastName, email, role } = user;
     res.status(200).json({
       status: 200,
       payload: {
         token: token,
         _id,
         username,
+        firstName,
+        lastName,
         email,
         role,
       },
